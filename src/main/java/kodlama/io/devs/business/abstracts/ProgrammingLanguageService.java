@@ -14,10 +14,13 @@ public interface ProgrammingLanguageService {
 
 	void add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) throws Exception;
 
-	void update(int id, UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest);
+	void update(int id, UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) throws Exception;
 
-	void delete(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest);
+	void delete(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest) throws Exception;
 
 	GetByIdProgrammingLanguageResponse getById(int id);
-
+	
+	
+	
+	
 }

@@ -54,13 +54,13 @@ public class ProgrammingLanguagesController {
 
 
     @DeleteMapping("/delete")
-    public void deleteById(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest) {
+    public void deleteById(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest) throws Exception {
 
         programmingLanguageService.delete(deleteProgrammingLanguageRequest);
     }
 
     @PutMapping("/update")
-    public void update(int id, UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) {
+    public void update(int id, UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) throws Exception {
 
         programmingLanguageService.update(id, updateProgrammingLanguageRequest);
 

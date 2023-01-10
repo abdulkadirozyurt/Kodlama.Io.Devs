@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,19 +48,19 @@ public class TechnologiesController {
     }
 
     @PostMapping("/add")
-    public void add(CreateTechnologyRequest createTechnologyRequest) {
+    public void add( CreateTechnologyRequest createTechnologyRequest) throws Exception {
 
-        technologyService.add(createTechnologyRequest);
+        this.technologyService.add(createTechnologyRequest);
     }
 
     @DeleteMapping("/delete")
-    public void deleteById(DeleteTechnologyRequest deleteTechnologyRequest) {
+    public void deleteById( DeleteTechnologyRequest deleteTechnologyRequest) throws Exception {
 
         technologyService.delete(deleteTechnologyRequest);
     }
 
     @PutMapping("/update")
-    public void update(int id, UpdateTechnologyRequest updateTechnologyRequest) {
+    public void update( int id, UpdateTechnologyRequest updateTechnologyRequest) throws Exception {
 
         technologyService.update(id, updateTechnologyRequest);
 

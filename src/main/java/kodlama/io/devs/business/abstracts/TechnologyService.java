@@ -14,11 +14,11 @@ public interface TechnologyService {
 
     GetByIdTechnologyResponse getById(int id);
 
-    void add(CreateTechnologyRequest createTechnologyRequest);
+    void add(CreateTechnologyRequest createTechnologyRequest) throws Exception;
 
-    void delete(DeleteTechnologyRequest DeleteTechnologyRequest);
+    void delete(DeleteTechnologyRequest DeleteTechnologyRequest) throws Exception;
 
-    void update(int id, UpdateTechnologyRequest updateTechnologyRequest);
+    void update(int id, UpdateTechnologyRequest updateTechnologyRequest) throws Exception;
     
     
     
