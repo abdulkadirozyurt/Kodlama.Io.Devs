@@ -1,118 +1,70 @@
 package kodlama.io.devs.business.concretes;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kodlama.io.devs.business.abstracts.ProgrammingLanguageService;
+import kodlama.io.devs.business.core.utilities.mappers.ModelMapperService;
 import kodlama.io.devs.business.requests.CreateProgrammingLanguageRequest;
 import kodlama.io.devs.business.requests.DeleteProgrammingLanguageRequest;
 import kodlama.io.devs.business.requests.UpdateProgrammingLanguageRequest;
-import kodlama.io.devs.business.responses.GetAllProgrammingLanguageResponse;
-import kodlama.io.devs.business.responses.GetAllTechnologiesResponse;
+import kodlama.io.devs.business.responses.GetAllProgrammingLanguagesResponse;
 import kodlama.io.devs.business.responses.GetByIdProgrammingLanguageResponse;
+import kodlama.io.devs.business.rules.ProgrammingLanguageBusinessRules;
 import kodlama.io.devs.dataAccess.abstracts.ProgrammingLanguageRepository;
-import kodlama.io.devs.dataAccess.abstracts.TechnologyRepository;
 import kodlama.io.devs.entities.concretes.ProgrammingLanguage;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class ProgrammingLanguageManager implements ProgrammingLanguageService {
 
-	private ProgrammingLanguageRepository programmingLanguageRepository;
-	private TechnologyRepository technologyRepository;
+	private ProgrammingLanguageRepository programmingLanguageRepository;	
+	private ModelMapperService modelMapperService;
+	private ProgrammingLanguageBusinessRules programmingLanguageBusinessRules; 
 
-	@Autowired
-	public ProgrammingLanguageManager(ProgrammingLanguageRepository programmingLanguageRepository,
-			TechnologyRepository technologyRepository) {
+	@Override
+	public List<GetAllProgrammingLanguagesResponse> getAll() {
+		List<ProgrammingLanguage> programmingLanguages = this.programmingLanguageRepository.findAll();
+		List<GetAllProgrammingLanguagesResponse> programmingLanguagesResponse = programmingLanguages.stream()
+				.map(programmingLanguage -> this.modelMapperService.forResponse().map(programmingLanguage,
+						GetAllProgrammingLanguagesResponse.class)).collect(Collectors.toList());
+				
 
-		this.programmingLanguageRepository = programmingLanguageRepository;
-		this.technologyRepository=technologyRepository;
+		return programmingLanguagesResponse;
 	}
 
 	@Override
-	public List<GetAllProgrammingLanguageResponse> getAll() {
-
-		List<ProgrammingLanguage> languages = programmingLanguageRepository.findAll();
-		List<GetAllProgrammingLanguageResponse> languageResponse = new ArrayList<GetAllProgrammingLanguageResponse>();
-		for (ProgrammingLanguage language : languages) {
-			GetAllProgrammingLanguageResponse responseItem = new GetAllProgrammingLanguageResponse();
-			responseItem.setId(language.getProgrammingLanguageId());
-			responseItem.setName(language.getProgrammingLanguageName());
-			languageResponse.add(responseItem);
-		}
-		return languageResponse;
-	}
-
-	@Override
-	public void add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) throws Exception {
-
-		if (isNameExist(createProgrammingLanguageRequest.getName())) {
-			throw new Exception("Dil zaten mevcut.");
-		}
-		else {
-		ProgrammingLanguage programmingLanguage = new ProgrammingLanguage();
-		programmingLanguage.setProgrammingLanguageName(createProgrammingLanguageRequest.getName());
+	public void add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) {
+		this.programmingLanguageBusinessRules.checkIfProgrammingLanguageNameExists(createProgrammingLanguageRequest.getName());
+		ProgrammingLanguage programmingLanguage = this.modelMapperService.forRequest()
+				.map(createProgrammingLanguageRequest, ProgrammingLanguage.class);
 		this.programmingLanguageRepository.save(programmingLanguage);
-		}
 	}
 
 	@Override
-	public void update(int id, UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) throws Exception {
-		
-		if (isNameExist(updateProgrammingLanguageRequest.getName())) {
-			throw new Exception("Girilen bilgiler zaten mevcut");
-		}
-		else if(!updateProgrammingLanguageRequest.getName().isEmpty()){
-			ProgrammingLanguage programmingLanguage = programmingLanguageRepository.findById(id).get();
-			programmingLanguage.setProgrammingLanguageName(updateProgrammingLanguageRequest.getName());
-			programmingLanguageRepository.save(programmingLanguage);
-		}
-	
+	public void update(UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) {
+		ProgrammingLanguage programmingLanguage = this.modelMapperService.forRequest()
+				.map(updateProgrammingLanguageRequest, ProgrammingLanguage.class);
+		this.programmingLanguageRepository.save(programmingLanguage);
 	}
 
 	@Override
-	public void delete(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest) throws Exception {
-		if (isIdExist(deleteProgrammingLanguageRequest.getId())) {
-			programmingLanguageRepository.deleteById(deleteProgrammingLanguageRequest.getId());
-		}
-		else {
-			throw new Exception("Dil mevcut değil.");
-		}
+	public void delete(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest) {
+		ProgrammingLanguage programmingLanguage = this.modelMapperService.forRequest()
+				.map(deleteProgrammingLanguageRequest, ProgrammingLanguage.class);
+		this.programmingLanguageRepository.delete(programmingLanguage);
 	}
 
 	@Override
 	public GetByIdProgrammingLanguageResponse getById(int id) {
 
-		ProgrammingLanguage programmingLanguage = programmingLanguageRepository.findById(id).get();
-		GetByIdProgrammingLanguageResponse response = new GetByIdProgrammingLanguageResponse();
-		response.setName(programmingLanguage.getProgrammingLanguageName());
-
-		return response;
-	}
-	
-	
-	public boolean isNameExist(String name) {
-		for (GetAllProgrammingLanguageResponse languageResponse : this.getAll()) {
-			if (name.equals(languageResponse.getName())) {
-				return true;
-			}
-			
-		}
-		return false;		
-	}
-	
-	private boolean isIdExist(int id) {
-
-		for (GetAllProgrammingLanguageResponse languageResponse : this.getAll()) {
-
-			if (languageResponse.getId()==id) {
-				return true;
-			}
-				
-		}
-		return false;
+		ProgrammingLanguage programmingLanguage = this.programmingLanguageRepository.findById(id).orElseThrow();
+		GetByIdProgrammingLanguageResponse getByIdProgrammingLanguageResponse = this.modelMapperService.forResponse()
+				.map(programmingLanguage, GetByIdProgrammingLanguageResponse.class);
+		return getByIdProgrammingLanguageResponse;
 	}
 
 }

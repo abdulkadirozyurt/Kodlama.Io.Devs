@@ -19,16 +19,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "programming_languages")
+@Table(name = "programmingLanguages")
 public class ProgrammingLanguage {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "programmingLanguage_id")
-	private int programmingLanguageId;
+	@Column(name = "id")
+	private int id;
 
-	@Column(name = "programmingLanguage_name")
-	private String programmingLanguageName;
+	@Column(name = "name")
+	private String name;
 
 	@OneToMany(mappedBy = "programmingLanguage")
 	private List<Technology> technologies;

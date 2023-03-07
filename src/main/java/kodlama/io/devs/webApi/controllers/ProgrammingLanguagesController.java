@@ -2,11 +2,14 @@ package kodlama.io.devs.webApi.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,55 +17,46 @@ import kodlama.io.devs.business.abstracts.ProgrammingLanguageService;
 import kodlama.io.devs.business.requests.CreateProgrammingLanguageRequest;
 import kodlama.io.devs.business.requests.DeleteProgrammingLanguageRequest;
 import kodlama.io.devs.business.requests.UpdateProgrammingLanguageRequest;
-import kodlama.io.devs.business.responses.GetAllProgrammingLanguageResponse;
+import kodlama.io.devs.business.responses.GetAllProgrammingLanguagesResponse;
 import kodlama.io.devs.business.responses.GetByIdProgrammingLanguageResponse;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/programmingLanguages")
+@AllArgsConstructor
 public class ProgrammingLanguagesController {
 
-    private ProgrammingLanguageService programmingLanguageService;
+    private ProgrammingLanguageService programmingLanguagesService;
+   
+    
+    @GetMapping()
+    public List<GetAllProgrammingLanguagesResponse> getAll() {
 
-
-    public ProgrammingLanguagesController() {
-        super();
+        return this.programmingLanguagesService.getAll();
     }
 
-
-    @Autowired
-    public ProgrammingLanguagesController(ProgrammingLanguageService programmingLanguageService) {
-
-        this.programmingLanguageService = programmingLanguageService;
+    @GetMapping("/{id}")
+    public GetByIdProgrammingLanguageResponse getByID(@PathVariable int id) {
+        return this.programmingLanguagesService.getById(id);
     }
 
-    @GetMapping("/getall")
-    public List<GetAllProgrammingLanguageResponse> getAll() {
-
-        return programmingLanguageService.getAll();
-    }
-
-    @GetMapping("/getById")
-    public GetByIdProgrammingLanguageResponse getByID(int id) {
-        return programmingLanguageService.getById(id);
-    }
-
-    @PostMapping("/add")
-    public void add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) throws Exception {
-        programmingLanguageService.add(createProgrammingLanguageRequest);
+    @PostMapping()
+    public void add(@RequestBody @Valid CreateProgrammingLanguageRequest createProgrammingLanguageRequest)  {
+    	this.programmingLanguagesService.add(createProgrammingLanguageRequest);
     }
 
 
 
-    @DeleteMapping("/delete")
-    public void deleteById(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest) throws Exception {
+    @DeleteMapping()
+    public void deleteById(@RequestBody DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest)  {
 
-        programmingLanguageService.delete(deleteProgrammingLanguageRequest);
+    	this.programmingLanguagesService.delete(deleteProgrammingLanguageRequest);
     }
 
-    @PutMapping("/update")
-    public void update(int id, UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) throws Exception {
+    @PutMapping()
+    public void update(@RequestBody UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) {
 
-        programmingLanguageService.update(id, updateProgrammingLanguageRequest);
+        this.programmingLanguagesService.update(updateProgrammingLanguageRequest);
 
     }
 

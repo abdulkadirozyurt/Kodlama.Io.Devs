@@ -2,7 +2,8 @@ package kodlama.io.devs.webApi.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,23 +18,17 @@ import kodlama.io.devs.business.requests.DeleteTechnologyRequest;
 import kodlama.io.devs.business.requests.UpdateTechnologyRequest;
 import kodlama.io.devs.business.responses.GetAllTechnologiesResponse;
 import kodlama.io.devs.business.responses.GetByIdTechnologyResponse;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/technologies")
-public class TechnologiesController {
+@AllArgsConstructor
 
-    public TechnologiesController() {
-        super();
-    }
+public class TechnologiesController {   
 
     private TechnologyService technologyService;
 
-    @Autowired
-    public TechnologiesController(TechnologyService technologyService) {
-
-        this.technologyService = technologyService;
-    }
-
+    
     @GetMapping("/getall")
     public List<GetAllTechnologiesResponse> getAll() {
 
@@ -48,21 +43,21 @@ public class TechnologiesController {
     }
 
     @PostMapping("/add")
-    public void add( CreateTechnologyRequest createTechnologyRequest) throws Exception {
+    public void add(@RequestBody @Valid CreateTechnologyRequest createTechnologyRequest)  {
 
         this.technologyService.add(createTechnologyRequest);
     }
 
     @DeleteMapping("/delete")
-    public void deleteById( DeleteTechnologyRequest deleteTechnologyRequest) throws Exception {
+    public void deleteById(@RequestBody DeleteTechnologyRequest deleteTechnologyRequest)  {
 
         technologyService.delete(deleteTechnologyRequest);
     }
 
     @PutMapping("/update")
-    public void update( int id, UpdateTechnologyRequest updateTechnologyRequest) throws Exception {
+    public void update(@RequestBody UpdateTechnologyRequest updateTechnologyRequest) {
 
-        technologyService.update(id, updateTechnologyRequest);
+        technologyService.update(updateTechnologyRequest);
 
     }
 }

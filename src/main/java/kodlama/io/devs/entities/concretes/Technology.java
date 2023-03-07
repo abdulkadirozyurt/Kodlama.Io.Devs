@@ -23,14 +23,14 @@ public class Technology {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "technology_id")
+    @Column(name = "id")
     private int id;
 
-    @Column(name = "technology_name")
+    @Column(name = "name")
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "language_id")
+    @JoinColumn(name = "programming_Language_id")
     private ProgrammingLanguage programmingLanguage;
 
 }
